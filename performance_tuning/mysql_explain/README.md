@@ -1,6 +1,6 @@
 ## Explain 详解与索引优化最佳实践
 
->MySQL 安装文档参考[这里](mysql_install.md)
+>MySQL 安装文档参考[这里](mysql_install/mysql_install.md)
 
 ### Explain工具介绍
 使用EXPLAIN关键字可以模拟优化器执行SQL语句，分析你的查询语句或是结构的性能瓶颈。  

@@ -30,7 +30,7 @@ rpm -qa|grep mariadb
 ### MySQL 5.7 安装
 #### 1. 下载 MySQL 5.7
 ```shell
-wget http://mirrors.sohu.com/mysql/MySQL-5.7/mysql-5.7.17-linux-glibc2.5-x86_64.tar.gz
+wget https://mirrors.aliyun.com/mysql/MySQL-5.7/mysql-5.7.36-linux-glibc2.12-x86_64.tar.gz
 ```
 检查是否本地已经安装了mysql
 ```shell
@@ -40,18 +40,23 @@ rpm -qa | grep mysql
 ```shell
 rpm -e 已经存在的MySQL全名
 ```
-已经存在的MySQL全名 是 grep 出来的文件名
+已经存在的MySQL全名 是 grep 出来的文件名，若 grep 没有检索出信息，则不需要卸载
+
+![MySQL5.7 下载](mysql57_download.png)
+
 #### 2. 解压文件
 ```shell
 tar -zxvf mysql-5.7.17-linux-glibc2.5-x86_64.tar.gz -C /usr/local/
 ```
+![MySQL5.7解压](mysql57_unzip.png)
 文件名修改为mysql：
 ```shell
 cd /usr/local/ && mv mysql-5.7.17-linux-glibc2.5-x86_64/ mysql
 ```
+![mysql57重命名](mysql57_rename.png)
 #### 3. 配置启动文件
 
-3.1 然后去到mysql的support-files目录下,复制my.cnf到 /etc/my.cnf(mysqld启动时自动读取)
+3.1 然后去到mysql的support-files目录下,复制my.cnf到 /etc/my.cnf(mysqld启动时自动读取，若是没有这个文件就直接进行 3.2 步)
 ```shell
 cd mysql/support-files/ && cp my-default.cnf /etc/my.cnf 
 ```
@@ -64,11 +69,11 @@ vi /etc/my.cnf
 按`i`键后添加以下内容
 ```
 [mysql]
-default-character-set=utf8
+default-character-set=utf8mb4
 
 [mysqld]
 default-storage-engine=INNODB
-character_set_server=utf8
+character_set_server=utf8mb4
 ```
 按 `wq` 保存
 
@@ -81,11 +86,14 @@ cp mysql.server /etc/init.d/mysql
 ```shell
 vi /etc/init.d/mysql
 ```
+![为开机启动做准备 & 配置参数](mysql57_init_start.png)
 修改以下内容
 ```
 basedir=/usr/local/mysql
 datadir=/usr/local/mysql/data
 ```
+
+![参数配置](mysql57_param_config.png)
 
 3.5 出于安全便利，创建一个操作数据库的专门用户
 
@@ -109,13 +117,79 @@ passwd mysql
 chown -R mysql:mysql /usr/local/mysql/
 ```
 
+![创建一个操作数据库的组](mysql57_tmp_user.png)
+
 #### 4. 初始化 mysql 的数据库
 
 4.1 初始化数据库
 ```shell
 cd /usr/local/mysql/bin/ && ./mysqld --initialize --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data
 ```
-PS:初始化后会生成一个临时密码 root@localhost:：*(最好先记录这个临时密码)
+PS:初始化后会生成一个临时密码 root@localhost:：*(最好先记录这个临时密码，我这里是 ",fFpga%lw5(V"，双引号内的都是密码)
+
+![初始化数据库](mysql57_init_database.png)
+
+有可能在这一步执行命令的时候遇到如下错误：
+```
+./mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
+```
+![初始化数据库报错](mysql57_init_database_error.png)
+
+解决办法：<br />
+```shell
+yum install -y libaio.so.1
+yum install -y libaio
+```
+可能执行该命令时又遇到了如下报错：
+```shell
+Could not retrieve mirrorlist http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=os&infra=stock error was
+14: curl#6 - "Could not resolve host: mirrorlist.centos.org; 未知的名称或服务"
+```
+该问题原因是CentOS7镜像找不到，具体原因不深入研究。下面说解决办法：
+1. 备份repos文件
+```shell
+cp -v /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+```
+2. 修改/etc/yum.repos.d/CentOS-Base.repo文件
+```shell
+vi /etc/yum.repos.d/CentOS-Base.repo
+```
+3. 修改文件，改为如下内容：
+```
+[base]
+name=CentOS-$releasever - Base
+baseurl=https://vault.centos.org/7.9.2009/os/$basearch
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#released updates 
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=https://vault.centos.org/7.9.2009/updates/$basearch
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=https://vault.centos.org/7.9.2009/extras/$basearch
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+baseurl=https://vault.centos.org/7.9.2009/centosplus/$basearch
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+```
+4. 保存退出（保存方法：按`esc`，然后输入`:wq`，回车确认）
+5. 更新镜像源并清理缓存
+```shell
+yum clean all && yum makecache
+```
+6. 如果后面弹出是否下载的提示，全部输入y即可
 
 4.2 给数据库加密
 ```shell
@@ -127,11 +201,14 @@ PS:初始化后会生成一个临时密码 root@localhost:：*(最好先记录�
 ./mysqld_safe --user=mysql &
 ```
 
+![加密并启动](mysql57_rsa_and_start.png)
+
 4.4 检查mysql是否启动
 ```shell
 ps -ef|grep mysql
 ```
-发现有进程便代表启动成功。
+再开一个远程连接执行命令，发现有进程便代表启动成功。
+![检查是否启动MySQL](mysql57_find_thread.png)
 
 #### 5. 进入客户端
 
@@ -148,12 +225,16 @@ set password=password('新密码');
 ```
 PS:`新密码`需要替换成想要替换的密码
 
+![登录并修改密码](mysql57_login_and_change_passwd.png)
+
 #### 6. 设置远程访问
 
 6.1 打开mysql的默认端口3306
 ```shell
 firewall-cmd --zone=public --add-port=3306/tcp --permanent && firewall-cmd --reload
 ```
+
+![设置防火墙打开端口](mysql57_firewall_open_port.png)
 
 6.2 设置mysql的远程访问
 
@@ -165,7 +246,7 @@ grant all privileges on *.* to root@'%' identified by 'root';
 ```sql
 flush privileges;
 ```
-
+![远程访问](mysql57_remote_req.png)
 
 #### 7. 设置开机自启动
 
@@ -177,6 +258,8 @@ chkconfig --add mysql
 ```shell
 chkconfig mysql on
 ```
+
+![设置开机启动](mysql57_reboot_start.png)
 
 #### 8. 配置环境变量
 
@@ -355,7 +438,7 @@ mysqld --defaults-file=/data/software/mysql8/my.cnf --basedir=/data/software/mys
 
 查看 MySQL的 bin路径下，是否包含mysqld_safe，用于后台安全启动MySQL。
 
-![mysqld_safe](mysqld_safe.png)
+![mysqld_safe](mysql57_safe.png)
 
 4.1 启动服务
 ```shell
