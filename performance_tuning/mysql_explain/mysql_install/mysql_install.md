@@ -239,8 +239,9 @@ firewall-cmd --zone=public --add-port=3306/tcp --permanent && firewall-cmd --rel
 6.2 设置mysql的远程访问
 
 设置远程访问账号:grant all privileges on . to 远程访问用户名@’%’ identified by ‘用户密码’;
+>PS：用户密码部分替换成自己期望的远程连接的密码
 ```sql
-grant all privileges on *.* to root@'%' identified by 'root';
+grant all privileges on *.* to root@'%' identified by 'zuifuzademima';
 ```
 刷新权限
 ```sql
