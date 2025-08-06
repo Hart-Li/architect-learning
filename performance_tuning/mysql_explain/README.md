@@ -50,7 +50,48 @@ INSERT INTO `film_actor` (`id`, `film_id`, `actor_id`) VALUES (1,1,1),(2,1,2),(3
 ```sql
 explain select * from actor;
 ```
-
-
-
+结果如图所示：
+![explain例子](explain_example.png)
 在查询中的每个表会输出一行，如果有两个表通过 join 连接查询，那么会输出两行
+
+### Explain 变种
+> 本部分涉及的是 explain 执行之后展示的列的问题，忽略本部分影响不大~而且最新版本的 explain extended 和 explain partitions 的结果和 explain 是一致的。之前版本 explain 是会少 filtered 和 partitions 两个字段。 
+
+- explain extended
+
+    会在 `explain` 的基础上额外提供一些查询优化的信息。紧随其后通过 `show warnings` 命令可以得到优化后的查询语句，从而看出优化器优化了什么。额外还有 *`filtered`* 列，是一个百分比的值，`rows * filtered/100` 可以估算出将要和 `explain` 中前一个表进行连接的行数（前一个表指 `explain` 中的id值比当前表id值小的表）
+    ```sql
+    explain extended select * from film where id = 1;
+    ```
+  ![explain_extended](explain_extended.png)
+    ```sql
+    show warnings;
+    ```
+  ![show_warning](show_warnings.png)
+  show warnings 执行之后第一行是说明`extended`已经被废弃掉了，第二行说明是SQL优化后的结果。 
+- explain partitions
+
+  相比 explain 多了个 partitions 字段，如果查询是基于分区表的话，会显示查询将访问的分区。
+
+### explain 列
+
+1. id 列
+
+id 编号是 select 的序列号，有几个 select 就有几个 id。
+- id 越大，越先执行
+- id 相同，从上往下执行
+
+2. select_type 列
+
+select_type 表示对应行是简单还是复杂的查询。
+
+- simple：简单查询，查询中不包含子查询和 union
+- primary：复杂查询中最外层的 select 
+- subquery：包含在 select 中的子查询（）
+
+3. table 列
+4. type 列
+5. possible_keys 列
+6. key 列
+7. key_len 列
+
