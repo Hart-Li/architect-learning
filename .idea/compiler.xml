@@ -6,6 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="01-performance-tuning-02-class-load" />
+        <module name="salary-caler" />
         <module name="01-performance-tuning-01-jvm" />
       </profile>
     </annotationProcessing>
