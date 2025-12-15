@@ -72,3 +72,4 @@ public class StackOverflowTest {
 11. 这样的话，大约27s发生一次minor gc（1.6×1024÷60），minor gc 完成之后大约有60M对象无法回收，将尝试放入 S0 区域，而 S0 区域放满之后，发生 minor gc，这时会将所有的对象回收，那么就不再可能会有对象生产到老年代上了，自然不会发生 full gc 了。
 12. 优化后 JVM 启动参数设置：java -Xms3072M -Xmx3072M -Xmn2048M -Xss1M -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=512M -jar microservice-eureka-server.jar
 
+本文大部分是实战解析，需要读懂计算垃圾回收步骤，会分析。

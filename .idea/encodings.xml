@@ -10,6 +10,12 @@
     <file url="file://$PROJECT_DIR$/01-performance-tuning-03-memory-model/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/01-performance-tuning-04-object-create/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/01-performance-tuning-04-object-create/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-05-byte-file/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-05-byte-file/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-06-run-engine/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-06-run-engine/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-07-garbage-collection/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/01-performance-tuning-07-garbage-collection/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/salary-caler/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/salary-caler/src/main/resources" charset="UTF-8" />
   </component>

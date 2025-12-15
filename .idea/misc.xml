@@ -10,6 +10,9 @@
         <option value="$PROJECT_DIR$/salary-caler/pom.xml" />
         <option value="$PROJECT_DIR$/01-performance-tuning-03-memory-model/pom.xml" />
         <option value="$PROJECT_DIR$/01-performance-tuning-04-object-create/pom.xml" />
+        <option value="$PROJECT_DIR$/01-performance-tuning-05-byte-file/pom.xml" />
+        <option value="$PROJECT_DIR$/01-performance-tuning-06-run-engine/pom.xml" />
+        <option value="$PROJECT_DIR$/01-performance-tuning-07-garbage-collection/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

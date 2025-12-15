@@ -7,6 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="01-performance-tuning-02-class-load" />
+        <module name="01-performance-tuning-06-run-engine" />
+        <module name="01-performance-tuning-07-garbage-collection" />
+        <module name="01-performance-tuning-05-byte-file" />
         <module name="salary-caler" />
         <module name="01-performance-tuning-03-memory-model" />
         <module name="01-performance-tuning-04-object-create" />
